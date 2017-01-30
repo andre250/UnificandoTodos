@@ -6,7 +6,7 @@ while(a<10):
         print("Show")
     else:
         print("Otario")
-    a = a+1
+    a = a+2
 
 
 print ("Falow otario")
