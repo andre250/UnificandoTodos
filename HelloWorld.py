@@ -3,9 +3,9 @@ b = 100
 while(a<10):
 
     if(a<10):
-        print("Menor")
+        print("Show")
     else:
-        print("Maior")
+        print("Otario")
     a = a+1
 
 
