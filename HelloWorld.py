@@ -1,8 +1,12 @@
-a = 11
+a = 5
 b = 100
-if(a==10):
-    print("Verdadeiro")
-else:
-    print("Falso")
+while(a<10):
 
-print (a+b)
+    if(a<10):
+        print("Menor")
+    else:
+        print("Maior")
+    a = a+1
+
+
+print ("Falow otario")
