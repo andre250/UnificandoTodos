@@ -32,7 +32,7 @@ args.baseurl += "/api/v3/"
 try:
     if args.user_id is None:
         #args.user_id = os.environ['HAB_API_USER']
-        args.user_id = '4a91eb21-1ed7-4000-84a7-f6f217913a3e'
+        args.user_id = 'xxx'
 except KeyError:
     print ("User ID must be set by the -u/--user-id option or by setting the environment variable 'HAB_API_USER'")
     sys.exit(1)
@@ -40,7 +40,7 @@ except KeyError:
 try:
     if args.api_token is None:
         #args.api_token = os.environ['HAB_API_TOKEN']
-        args.api_token = '3fd4aee0-afb2-4683-af22-399af3e6fe15'
+        args.api_token = 'xxx'
 except KeyError:
     print ("API Token must be set by the -k/--api-token option or by setting the environment variable 'HAB_API_TOKEN'")
     sys.exit(1)
