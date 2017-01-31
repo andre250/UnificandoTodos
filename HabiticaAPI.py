@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-Phil Adams http://philadams.net
-Python wrapper around the Habitica (http://habitica.com) API
-http://github.com/philadams/habitica
-"""
-
-
 import json
 
 import requests
@@ -38,9 +28,6 @@ class Habitica(object):
     def __call__(self, **kwargs):
         method = kwargs.pop('_method', 'get')
 
-        # build up URL... Habitica's api is the *teeniest* bit annoying
-        # so either i need to find a cleaner way here, or i should
-        # get involved in the API itself and... help it.
         if self.aspect:
             aspect_id = kwargs.pop('_id', None)
             direction = kwargs.pop('_direction', None)
