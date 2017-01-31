@@ -1,12 +1,5 @@
-a = 5
-b = 100
-while(a<10):
-
-    if(a<10):
-        print("Show")
-    else:
-        print("Otario")
-    a = a+2
 
 
-print ("Falow otario")
+#Função Map aplica determinada ação a todos os elementos de uma lista
+
+
