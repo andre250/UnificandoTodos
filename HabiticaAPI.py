@@ -1,67 +1,53 @@
-import json
 
-import requests
+#!/usr/bin/env python
 
-API_URI_BASE = 'api/v3'
-API_CONTENT_TYPE = 'application/json'
+import argparse, json, os, requests, sys
+parser = argparse.ArgumentParser(description="Dumps your user data to a file user-data.json in the current directory")
 
 
-class Habitica(object):
+class Debug(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        import pdb; pdb.set_trace()
 
-    def __init__(self, auth=None, resource=None, aspect=None):
-        self.auth = auth
-        self.resource = resource
-        self.aspect = aspect
-        self.headers = auth if auth else {}
-        self.headers.update({'content-type': API_CONTENT_TYPE})
 
-    def __getattr__(self, m):
-        try:
-            return object.__getattr__(self, m)
-        except AttributeError:
-            if not self.resource:
-                return Habitica(auth=self.auth, resource=m)
-            else:
-                return Habitica(auth=self.auth, resource=self.resource,
-                                aspect=m)
+# MAIN
+parser.add_argument('-o','--outfile',
+                    type=argparse.FileType('w'), default="user-data.json",
+                    help='JSON data file (default: user-data.json)')
+parser.add_argument('-u','--user-id',
+                    help='From https://habitica.com/#/options/settings/api\n \
+                    default: environment variable HAB_API_USER')
+parser.add_argument('-k','--api-token',
+                    help='From https://habitica.com/#/options/settings/api\n \
+                    default: environment variable HAB_API_TOKEN')
+parser.add_argument('--baseurl',
+                    type=str, default="https://habitica.com",
+                    help='API server (default: https://habitica.com)')
+parser.add_argument('--debug',
+                    action=Debug, nargs=0,
+                    help=argparse.SUPPRESS)
+args = parser.parse_args()
+args.baseurl += "/api/v3/"
 
-    def __call__(self, **kwargs):
-        method = kwargs.pop('_method', 'get')
+try:
+    if args.user_id is None:
+        #args.user_id = os.environ['HAB_API_USER']
+        args.user_id = '4a91eb21-1ed7-4000-84a7-f6f217913a3e'
+except KeyError:
+    print ("User ID must be set by the -u/--user-id option or by setting the environment variable 'HAB_API_USER'")
+    sys.exit(1)
 
-        if self.aspect:
-            aspect_id = kwargs.pop('_id', None)
-            direction = kwargs.pop('_direction', None)
-            uri = '%s/%s' % (self.auth['url'],
-                             API_URI_BASE)
-            if aspect_id is not None:
-                uri = '%s/%s/%s' % (uri,
-                                    self.aspect,
-                                    str(aspect_id))
-            elif self.aspect == 'tasks':
-                uri = '%s/%s/%s' % (uri,
-                                    self.aspect,
-                                    self.resource)
-            else:
-                uri = '%s/%s/%s' % (uri,
-                                    self.resource,
-                                    self.aspect)
-            if direction is not None:
-                uri = '%s/score/%s' % (uri, direction)
-        else:
-            uri = '%s/%s/%s' % (self.auth['url'],
-                                API_URI_BASE,
-                                self.resource)
+try:
+    if args.api_token is None:
+        #args.api_token = os.environ['HAB_API_TOKEN']
+        args.api_token = '3fd4aee0-afb2-4683-af22-399af3e6fe15'
+except KeyError:
+    print ("API Token must be set by the -k/--api-token option or by setting the environment variable 'HAB_API_TOKEN'")
+    sys.exit(1)
 
-        # actually make the request of the API
-        if method in ['put', 'post', 'delete']:
-            res = getattr(requests, method)(uri, headers=self.headers,
-                                            data=json.dumps(kwargs))
-        else:
-            res = getattr(requests, method)(uri, headers=self.headers,
-                                            params=kwargs)
+headers = {"x-api-user":args.user_id,"x-api-key":args.api_token,"Content-Type":"application/json"}
 
-        # print(res.url)  # debug...
-        if res.status_code == requests.codes.ok:
-            return res.json()["data"]
-        else:
-            res.raise_for_status()
+req = requests.get(args.baseurl + "user", headers=headers)
+print(req.content)
+# with open(args.outfile, 'w') as f:
+json.dump(req.json(),args.outfile,separators=(',',':'),sort_keys=True)
